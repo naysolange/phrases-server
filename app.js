@@ -1,9 +1,13 @@
-const express = require('express')
-const app = express()
-const port = 3001
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+const UAParser = require('ua-parser-js');
 const PhrasesService = require('./PhrasesService'); 
+const port = 5001;
+const app = express();
 const service = new PhrasesService();
 app.use(express.json()); 
+app.use(cors()); 
 
 app.get('/', (req, res) => {
   res.send('I am alive!');
@@ -21,16 +25,44 @@ app.get('/:amount', (req, res) => {
   res.status(200).json(response);
 });
 
-app.post('/', (req, res) => {
-  const { phrase, location } = req.body;
+app.post('/', async (req, res) => {
+  const { phrase } = req.body;
+  var locationInfo; 
 
-  console.log(req.body);
+  // Get city by ip
+  try {
+    const response = await axios.get(`https://ipinfo.io/${req.ip}/json`);
+    locationInfo = {
+      city: response.data.city,
+      country: response.data.country,
+      loc: response.data.loc
+    };
+   
+  } catch (error) {
+    locationInfo = {
+      city: "unknown",
+      country: "unknown",
+      loc: "unknown"
+    };
+    console.error(error);
+  }
 
-  if (!phrase || !location) {
+  // Get device from agent
+  const userAgent = req.get('User-Agent');
+  const parser = new UAParser(userAgent);
+  const result = parser.getResult();
+
+  const deviceInfo = {
+    browser: `${result.browser.name} ${result.browser.version}`,
+    os: `${result.os.name} ${result.os.version}`,
+    device: result.device
+  };
+
+  if (!phrase) {
     return res.status(400).json({ error: 'Invalid body'});
   }
 
-  response = service.save(phrase, location);
+  response = service.save(phrase, locationInfo, deviceInfo);
 
   res.status(201).json(response);
 })

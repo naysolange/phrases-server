@@ -4,11 +4,12 @@ class PhrasesService {
         this.data = [];
     }
     
-    save(phrase, location) {
+    save(phrase, locationInfo, deviceInfo) {
         const dataObject = {
             phrase: phrase,
             timestamp: new Date().toUTCString(),
-            location: location,
+            location_info: locationInfo,
+            device_info: deviceInfo
         };
 
         this.data.push(dataObject);
@@ -16,8 +17,16 @@ class PhrasesService {
     }
 
     get(amount) {
+        const mapDataToJSON = (item) => {
+            return {
+                phrase: item.phrase,
+                location: `${item.location_info.city}, ${item.location_info.country}`,
+                device: `${item.device_info.browser}, ${item.device_info.os}`
+            };
+        };
+
         if (amount >= this.data.length) {
-          return this.data.map((item) => item.phrase); 
+            return this.data.map(mapDataToJSON);
         }
     
         const dataCopy = [...this.data];
@@ -29,9 +38,7 @@ class PhrasesService {
 
         const selectedData = dataCopy.slice(0, amount);
     
-        const phrases = selectedData.map((item) => item.phrase);
-    
-        return phrases;
+        return selectedData.map(mapDataToJSON);
     }
 }
 
