@@ -3,7 +3,7 @@ const cors = require('cors');
 const axios = require('axios');
 const UAParser = require('ua-parser-js');
 const PhrasesService = require('./PhrasesService'); 
-const port = 5001;
+const port = process.env.port || 5001;
 const app = express();
 const service = new PhrasesService();
 app.use(express.json()); 
