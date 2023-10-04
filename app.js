@@ -3,6 +3,7 @@ const cors = require('cors');
 const axios = require('axios');
 const UAParser = require('ua-parser-js');
 const PhrasesService = require('./PhrasesService'); 
+const hostname = "0.0.0.0";
 const port = process.env.port || 5001;
 const app = express();
 const service = new PhrasesService();
@@ -69,5 +70,5 @@ app.post('/', async (req, res) => {
 
 
 app.listen(port, () => {
-  console.log(`Phrases server listening on port ${port}`)
+  console.log(`Phrases server running at http://${hostname}:${port}/`);
 })
