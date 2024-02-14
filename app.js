@@ -54,8 +54,10 @@ app.post('/', async (req, res) => {
   const result = parser.getResult();
 
   const deviceInfo = {
-    browser: `${result.browser.name} ${result.browser.version}`,
-    os: `${result.os.name} ${result.os.version}`,
+    browser: result.browser.name,
+    browser_version: result.os.version,
+    os: result.os.name,
+    os_version: result.os.version,
     device: result.device
   };
 

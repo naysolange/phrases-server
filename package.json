@@ -4,6 +4,7 @@
   "description": "A phrases server",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "test"
   },
   "repository": {
