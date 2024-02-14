@@ -33,8 +33,10 @@ app.post('/', async (req, res) => {
   // Get city by ip
   try {
     const response = await axios.get(`https://ipinfo.io/${req.ip}/json`);
+
     locationInfo = {
       city: response.data.city,
+      region: response.data.region,
       country: response.data.country,
       loc: response.data.loc
     };

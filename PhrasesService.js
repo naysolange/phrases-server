@@ -7,8 +7,9 @@ class PhrasesService {
     save(phrase, locationInfo, deviceInfo) {
         const dataObject = {
             phrase: phrase,
-            country: locationInfo.country,
             city: locationInfo.city,
+            region: locationInfo.region,
+            country: locationInfo.country,
             browser: deviceInfo.browser,
             browser_version: deviceInfo.browser_version,
             os: deviceInfo.os,
@@ -25,7 +26,7 @@ class PhrasesService {
         const mapDataToJSON = (item) => {
             return {
                 phrase: item.phrase,
-                location: `${item.city}, ${item.country}`,
+                location: `${item.city}, ${item.region}, ${item.country}`,
                 device: `${item.browser} ${item.browser_version}, ${item.os} ${item.os_version}`
             };
         };
