@@ -14,7 +14,9 @@ class PhrasesService {
             browser_version: deviceInfo.browser_version,
             os: deviceInfo.os,
             os_version: deviceInfo.os_version,
-            device: deviceInfo.device,
+            device_model: deviceInfo.device_model,
+            device_type: deviceInfo.device_type,
+            device_vendor: deviceInfo.device_vendor,
             timestamp: Date.now()
         };
 
@@ -27,7 +29,8 @@ class PhrasesService {
             return {
                 phrase: item.phrase,
                 location: `${item.city}, ${item.region}, ${item.country}`,
-                device: `${item.browser} ${item.browser_version}, ${item.os} ${item.os_version}`
+                device: `${item.device_model}, ${item.device_type}, ${item.device_vendor}`,
+                os: `${item.browser} ${item.browser_version}, ${item.os} ${item.os_version}`
             };
         };
 

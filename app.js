@@ -60,7 +60,9 @@ app.post('/', async (req, res) => {
     browser_version: result.os.version,
     os: result.os.name,
     os_version: result.os.version,
-    device: result.device
+    device_model: result.device.model,
+    device_type: result.device.type,
+    device_vendor: result.device.vendor
   };
 
   if (!phrase) {
