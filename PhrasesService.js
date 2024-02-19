@@ -3,10 +3,6 @@ const { JWT } = require('google-auth-library');
 const credentials = require('./credentials.json');
 
 class PhrasesService {
-    
-    constructor() {
-        this.spreadsheetId = '10lJjBOwuAYuwOKuCAGpF5pF-VeA1-bksR7p0D5l6An0';
-    }
 
     async init() {
         const auth = new JWT({
@@ -17,7 +13,7 @@ class PhrasesService {
             ],
         });
 
-        this.doc = new GoogleSpreadsheet(this.spreadsheetId, auth);
+        this.doc = new GoogleSpreadsheet(process.env.spreadsheet_id || credentials.spreadsheet_id, auth);
         await this.doc.loadInfo();
     }
 
