@@ -4,7 +4,7 @@ const axios = require('axios');
 const UAParser = require('ua-parser-js');
 const PhrasesService = require('./PhrasesService'); 
 
-const hostname = "0.0.0.0";
+const hostname = process.env.HOST || "0.0.0.0";
 const port = process.env.PORT || 5001; 
 const app = express();
 const service = new PhrasesService();
