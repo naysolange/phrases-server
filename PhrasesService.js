@@ -5,14 +5,14 @@ class PhrasesService {
 
     async init() {
         const auth = new JWT({
-            email: process.env.client_email,
-            key: process.env.private_key,
+            email: process.env.CLIENT_EMAIL,
+            key: process.env.PRIVATE_KEY,
             scopes: [
               'https://www.googleapis.com/auth/spreadsheets',
             ],
         });
 
-        this.doc = new GoogleSpreadsheet(process.env.spreadsheet_id, auth);
+        this.doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID, auth);
         await this.doc.loadInfo();
     }
 
