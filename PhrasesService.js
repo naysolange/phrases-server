@@ -1,13 +1,12 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
-const credentials = require('./credentials.json');
 
 class PhrasesService {
 
     async init() {
         const auth = new JWT({
-            email: process.env.client_email || credentials.client_email,
-            key: process.env.private_key || credentials.private_key,
+            email: process.env.client_email,
+            key: process.env.private_key,
             scopes: [
               'https://www.googleapis.com/auth/spreadsheets',
             ],
