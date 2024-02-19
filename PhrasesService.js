@@ -1,10 +1,31 @@
-class PhrasesService {
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { JWT } = require('google-auth-library');
+const credentials = require('./credentials.json');
 
-    constructor() {
-        this.data = [];
-    }
+class PhrasesService {
     
-    save(phrase, locationInfo, deviceInfo) {
+    constructor() {
+        this.spreadsheetId = '10lJjBOwuAYuwOKuCAGpF5pF-VeA1-bksR7p0D5l6An0';
+    }
+
+    async init() {
+        const auth = new JWT({
+            email: process.env.client_email || credentials.client_email,
+            key: process.env.private_key || credentials.private_key,
+            scopes: [
+              'https://www.googleapis.com/auth/spreadsheets',
+            ],
+        });
+
+        this.doc = new GoogleSpreadsheet(this.spreadsheetId, auth);
+        await this.doc.loadInfo();
+    }
+
+    async save(phrase, locationInfo, deviceInfo) {
+        if(!this.doc) {
+            await this.init();
+        }
+        const sheet = this.doc.sheetsByIndex[0];
         const dataObject = {
             phrase: phrase,
             city: locationInfo.city,
@@ -20,34 +41,40 @@ class PhrasesService {
             timestamp: Date.now()
         };
 
-        this.data.push(dataObject);
+        await sheet.addRow(dataObject);
         return dataObject;
     }
 
-    get(amount) {
-        const mapDataToJSON = (item) => {
+    async get(amount) {
+        if(!this.doc) {
+            await this.init();
+        }
+
+        const sheet = this.doc.sheetsByIndex[0];
+        const rows = await sheet.getRows({
+            limit: amount,
+            orderby: 'timestamp',
+            reverse: true
+        });
+
+        const UNKNOWN_LOCATION_TEXT = 'algún lugar del mundo';
+        const UNKNOWN_DEVICE_TEXT = 'algún dispositivo';
+        const UNKNOWN_OS_TEXT = 'algún navegador';
+
+        const mapDataToJSON = (row) => {
+            const unknownLocationText = UNKNOWN_LOCATION_TEXT;
+            const unknownDeviceText = UNKNOWN_DEVICE_TEXT;
+            const unknownOSText = UNKNOWN_OS_TEXT;
+
             return {
-                phrase: item.phrase,
-                location: `${item.city}, ${item.region}, ${item.country}`,
-                device: `${item.device_model}, ${item.device_type}, ${item.device_vendor}`,
-                os: `${item.browser} ${item.browser_version}, ${item.os} ${item.os_version}`
+                phrase: row.get('phrase'),
+                location: row.get('city') || row.get('region') || row.get('country') ? `${row.get('city') || unknownLocationText}, ${row.get('region') || unknownLocationText}, ${row.get('country') || unknownLocationText}` : unknownLocationText,
+                device: row.get('device_model') || row.get('device_type') || row.get('device_vendor') ? `${row.get('device_model') || unknownDeviceText}, ${row.get('device_type') || unknownDeviceText}, ${row.get('device_vendor') || unknownDeviceText}` : unknownDeviceText,
+                os: `${row.get('browser') || unknownOSText} ${row.get('browser_version') || unknownOSText}, ${row.get('os') || unknownOSText} ${row.get('os_version') || unknownOSText}`
             };
         };
 
-        if (amount >= this.data.length) {
-            return this.data.map(mapDataToJSON);
-        }
-    
-        const dataCopy = [...this.data];
-    
-        for (let i = dataCopy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [dataCopy[i], dataCopy[j]] = [dataCopy[j], dataCopy[i]];
-        }
-
-        const selectedData = dataCopy.slice(0, amount);
-    
-        return selectedData.map(mapDataToJSON);
+        return rows.map(mapDataToJSON);
     }
 }
 

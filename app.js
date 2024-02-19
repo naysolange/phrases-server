@@ -3,54 +3,57 @@ const cors = require('cors');
 const axios = require('axios');
 const UAParser = require('ua-parser-js');
 const PhrasesService = require('./PhrasesService'); 
+
 const hostname = "0.0.0.0";
-const port = process.env.port || 5001;
+const port = process.env.PORT || 5001; 
 const app = express();
 const service = new PhrasesService();
+
 app.use(express.json()); 
 app.use(cors()); 
 
 app.get('/', (req, res) => {
   res.send('I am alive!');
-})
+});
 
-app.get('/:amount', (req, res) => {
+app.get('/:amount', async (req, res) => { 
   const amount = parseInt(req.params.amount);
 
-  const response = service.get(amount);
+  try {
+    const response = await service.get(amount);
+    
+    if (response.length === 0) {
+      return res.status(400).json({ error: 'There are no phrases'});
+    }
 
-  if (response.length == 0) {
-    return res.status(400).json({ error: 'There are no phrases'});
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  res.status(200).json(response);
 });
 
 app.post('/', async (req, res) => {
   const { phrase } = req.body;
-  var locationInfo; 
+  let locationInfo; 
 
-  // Get city by ip
   try {
     const response = await axios.get(`https://ipinfo.io/${req.ip}/json`);
-
     locationInfo = {
       city: response.data.city,
       region: response.data.region,
       country: response.data.country,
       loc: response.data.loc
     };
-   
   } catch (error) {
+    console.error(error);
     locationInfo = {
       city: "unknown",
       country: "unknown",
       loc: "unknown"
     };
-    console.error(error);
   }
 
-  // Get device from agent
   const userAgent = req.get('User-Agent');
   const parser = new UAParser(userAgent);
   const result = parser.getResult();
@@ -69,12 +72,15 @@ app.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Invalid body'});
   }
 
-  response = service.save(phrase, locationInfo, deviceInfo);
-
-  res.status(201).json(response);
-})
-
+  try {
+    const response = await service.save(phrase, locationInfo, deviceInfo);
+    res.status(201).json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Phrases server running at http://${hostname}:${port}/`);
-})
+});
