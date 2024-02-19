@@ -12,7 +12,7 @@ class PhrasesService {
             ],
         });
 
-        this.doc = new GoogleSpreadsheet(process.env.spreadsheet_id || credentials.spreadsheet_id, auth);
+        this.doc = new GoogleSpreadsheet(process.env.spreadsheet_id, auth);
         await this.doc.loadInfo();
     }
 
