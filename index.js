@@ -36,9 +36,10 @@ app.get('/:amount', async (req, res) => {
 app.post('/', async (req, res) => {
   const { phrase } = req.body;
   let locationInfo; 
+  const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
   try {
-    const response = await axios.get(`https://ipinfo.io/${req.ip}/json`);
+    const response = await axios.get(`https://ipinfo.io/${clientIP}/json`);
     locationInfo = {
       city: response.data.city,
       region: response.data.region,
