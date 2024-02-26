@@ -10,7 +10,9 @@ const app = express();
 const service = new PhrasesService();
 
 app.use(express.json()); 
-app.use(cors()); 
+app.use(cors({
+  origin: 'https://quiensosahora.github.io'
+}));
 
 app.get('/', (req, res) => {
   res.send('I am alive!');
@@ -18,7 +20,6 @@ app.get('/', (req, res) => {
 
 app.get('/:amount', async (req, res) => { 
   const amount = parseInt(req.params.amount);
-
   try {
     const response = await service.get(amount);
     
@@ -28,18 +29,17 @@ app.get('/:amount', async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
+ });
 
 app.post('/', async (req, res) => {
   const { phrase } = req.body;
   let locationInfo; 
   const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
   try {
     const response = await axios.get(`https://ipinfo.io/${clientIP}/json`);
+    
     locationInfo = {
       city: response.data.city,
       region: response.data.region,
