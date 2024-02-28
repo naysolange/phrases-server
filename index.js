@@ -10,13 +10,14 @@ const app = express();
 const service = new PhrasesService();
 
 app.use(express.json()); 
-app.use(cors({
-  origin: 'https://quiensosahora.github.io'
-}));
 
 app.get('/', (req, res) => {
   res.send('I am alive!');
 });
+
+app.use(cors({
+  origin: 'https://quiensosahora.github.io'
+}));
 
 app.get('/:amount', async (req, res) => { 
   const amount = parseInt(req.params.amount);
