@@ -55,8 +55,8 @@ class PhrasesService {
         const UNKNOWN_CITY_TEXT = 'de algún lugar';
         const UNKNOWN_COUNTRY = 'algún país';
         const UNKNOWN_DEVICE_TEXT = 'algún dispositivo';
-        const UNKNOWN_OS_TEXT = '¿sistema operativo?';
-        const UNKNOWN_BROWSER_TEXT = '¿qué navegador?';
+        const UNKNOWN_OS_TEXT = 'un sistema operativo';
+        const UNKNOWN_BROWSER_TEXT = 'algún navegador';
         const EMPTY_PHRASE = 'no lo sé';
 
         const mapDataToJSON = (row) => {
