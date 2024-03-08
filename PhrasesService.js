@@ -46,11 +46,11 @@ class PhrasesService {
         }
 
         const sheet = this.doc.sheetsByIndex[0];
-        const rows = await sheet.getRows({
-            limit: amount,
-            orderby: 'timestamp',
-            reverse: true
+        let rows = await sheet.getRows({
+            limit: 100000
         });
+
+        rows = rows.reverse().slice(0, amount);
 
         const UNKNOWN_CITY_TEXT = 'de algún lugar';
         const UNKNOWN_COUNTRY = 'algún país';
