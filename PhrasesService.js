@@ -72,7 +72,7 @@ class PhrasesService {
             const device = (deviceModel === deviceType && deviceType === deviceVendor) ? deviceModel : `${deviceModel}, ${deviceType}, ${deviceVendor}`
 
             return {
-                phrase: `${row.get('phrase') || EMPTY_PHRASE}`,
+                phrase: `${row.get('phrase') || EMPTY_PHRASE}`.toLowerCase(),
                 location: `${row.get('city') || UNKNOWN_CITY_TEXT}, ${row.get('country') || UNKNOWN_COUNTRY}`,
                 device: `${device}`,
                 os: `${osPart}, ${browserPart}`
