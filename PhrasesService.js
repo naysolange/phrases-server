@@ -50,7 +50,8 @@ class PhrasesService {
             limit: 100000
         });
 
-        rows = rows.reverse().slice(0, amount);
+        // Devuelvo la cantidad de registros solicitados de manera random
+        rows = getRandomRows(rows, amount);
 
         const UNKNOWN_CITY_TEXT = 'de algún lugar';
         const UNKNOWN_COUNTRY = 'algún país';
@@ -81,5 +82,10 @@ class PhrasesService {
         return rows.map(mapDataToJSON);
     }
 }
+
+const getRandomRows = (array, n) => {
+    const shuffled = array.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, n);
+  }
 
 module.exports = PhrasesService;
