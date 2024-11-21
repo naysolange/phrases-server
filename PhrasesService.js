@@ -47,7 +47,7 @@ class PhrasesService {
 
         const sheet = this.doc.sheetsByIndex[0];
         let rows = await sheet.getRows({
-            limit: 100000
+            limit: 10000
         });
 
         // Devuelvo la cantidad de registros solicitados de manera random
